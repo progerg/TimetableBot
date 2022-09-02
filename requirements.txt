@@ -1,0 +1,4 @@
+vkbottle~=4.3.9
+python-dotenv~=0.20.0
+SQLAlchemy~=1.4.40
+asyncpg~=0.26.0
