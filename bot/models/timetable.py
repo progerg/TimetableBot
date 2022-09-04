@@ -20,3 +20,4 @@ class Timetable(SqlAlchemyBase):
     end = sqlalchemy.Column(sqlalchemy.VARCHAR(5))
     numerator = sqlalchemy.Column(sqlalchemy.Boolean)
     cabinet = sqlalchemy.Column(sqlalchemy.VARCHAR(10))
+    distance = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
