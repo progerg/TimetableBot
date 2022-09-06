@@ -1,7 +1,20 @@
+import datetime
+
 from sqlalchemy import select, update
 
 from db.base_db import BaseDBApi
-from models import User
+from models import User, Timetable
+
+
+day_to_name = {
+    1: "Понедельник",
+    2: "Вторник",
+    3: "Среда",
+    4: "Четверг",
+    5: "Пятница",
+    6: "Суббота",
+    7: "Воскресенье"
+}
 
 
 class DBApi(BaseDBApi):
@@ -48,3 +61,24 @@ class DBApi(BaseDBApi):
                                                                                 group=group, subgroup=subgroup))
         await self._sess.commit()
 
+    async def get_user_today_timetable(self, vk_id: int) -> list[Timetable]:
+        """
+        Получение расписания на сегодня по vk_id
+
+        :param vk_id:
+        :return:
+        """
+        year, week_number, weekday = datetime.datetime.now().isocalendar()
+
+        if week_number % 2 == 0:
+            numerator = False
+        else:
+            numerator = True
+
+        user = await self.get_user_by_vk_id(vk_id)
+        timetable = (await self._sess.execute(select(Timetable).where(Timetable.group == user.group,
+                                                                      Timetable.subgroup == user.subgroup,
+                                                                      Timetable.course == user.course,
+                                                                      Timetable.day == day_to_name[weekday],
+                                                                      Timetable.numerator.in_([numerator, None])))).scalars().all()
+        return timetable
